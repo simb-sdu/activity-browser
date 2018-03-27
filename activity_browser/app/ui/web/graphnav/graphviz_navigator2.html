@@ -79,9 +79,9 @@ label {
 <body>
 <h1 id="heading">Graph Navigator (JSON) </h1> 
 
-<p id="function" </p>
+<p id="function" ></p>
 
-<p id="data" </p>
+<p id="data"> </p>
 
 <!-- <script src="https://d3js.org/d3.v4.js"></script> -->
 <script src="scripts/d3.js"></script>
@@ -125,19 +125,26 @@ function windowSize() {
     return [x,y];
 };
 
-// var svg = d3.select("body").select("svg");
-// https://stackoverflow.com/questions/16265123/resize-svg-when-window-is-resized-in-d3-js
+
+  // zoom for the graph-
+
 var svg = d3.select("body")
-   .append("div")
-   .classed("svg-container", true) //container class to make it responsive
-   .append("svg")
-   //responsive SVG needs these 2 attributes and no width and height attr
-   // .attr("preserveAspectRatio", "none")
-   // .attr("preserveAspectRatio", "xMinYMin meet")
-   // .attr("viewBox", "0 0 600 400")
-   .attr('viewBox','0 0 '+windowSize()[0]+' '+windowSize()[1])
-   //class to make it responsive
-   .classed("svg-content-responsive", true); 
+ .append("svg")
+ .attr("viewBox", "0 0 600 400")
+ .attr("height", "100%")
+ .attr("width", "100%")
+ .call(d3.zoom().on("zoom", function () {
+    svg.attr("transform", d3.event.transform)
+ }))
+ .append("g")
+
+ //.classed("svg-container", true) //container class to make it responsive
+ //.attr("preserveAspectRatio", "none")
+ //.attr("preserveAspectRatio", "xMinYMin meet")
+
+ //.classed("svg-content-responsive", true);
+
+
 
 var render = dagreD3.render();  
 
@@ -174,7 +181,7 @@ function update_graph(json_data) {
 
 	  // Interacting with the graph (MUST HAPPEN AFTER RENDERING!)
 	  var nodes = svg.selectAll("g .node")
-	      .on("click", handleMouseClick);;
+	      .on("dblclick", handleMouseClick);
 
 	      // graph.set_rankdir("L")
 	// });
@@ -186,13 +193,14 @@ function update_graph(json_data) {
 		    window.bridge = channel.objects.bridge;
 		    window.bridge.node_clicked(graph.node(node).database + ";" + graph.node(node).id)
         window.bridge.graph_ready.connect(update_graph);
-		});	
-    // update_graph(jsondata)
-	}
+		});
+	};
+
 
 };
 
 // console.log(graph);
+
 
 // break strings into multiple lines after certain length if necessary
 function chunkString(str, length) {
@@ -205,8 +213,23 @@ new QWebChannel(qt.webChannelTransport, function (channel) {
     window.bridge.graph_ready.connect(update_graph);
 });
 
+// var svg = d3.select("body").select("svg");
+// https://stackoverflow.com/questions/16265123/resize-svg-when-window-is-resized-in-d3-js
+//var svg = d3.select("body")
+  // .append("div")
+
+  // .append("svg")
+   //responsive SVG needs these 2 attributes and no width and height attr
+   // .attr("preserveAspectRatio", "none")
+   // .attr("preserveAspectRatio", "xMinYMin meet")
+   // .attr("viewBox", "0 0 600 400")
+   //.attr('viewBox','0 0 '+windowSize()[0]+' '+windowSize()[1])
+   //class to make it responsive
+   //.classed("svg-content-responsive", true);
+
 </script>
 
 
 </body>
 </html>
+
