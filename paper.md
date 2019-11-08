@@ -27,23 +27,24 @@ bibliography: paper.bib
 ---
 
 # Summary
+The Activity Browser is an open source software for advanced Life Cycle Assessment (LCA) [@ISO]. LCA is a method for 
+assessing potential environmental impacts associated with products and services over their life cycle, which is often 
+used to inform decision making, for example in designing sustainable technologies or policy making. The Activity Browser 
+is a graphical user interface (GUI) to the brightway LCA framework [@mutel], 
+and makes common tasks such as managing projects, modeling life cycle inventories, and interpreting LCA results, easier 
+and more intuitive. Due to its pluggable design, it can also be extended to include new functionality. One example is a 
+modeling environment for modular LCA [@steubing], the impetus for the original development of the Activity Browser. 
+Modular LCA has since then been applied in several research applications [@suter, @mehr]. Another example is the recent 
+development of support for parameterized inventory datasets, which allow for better model fidelity than classic 
+assumptions of purely linear systems. 
+The Activity Browser is mainly written in Python, with some Javascript for interactive elements and consists roughly of 
+two parts: a GUI part and an interface with brightway. Brightway and the Activity Browser can together be seen as two 
+complementary layers to enhance productivity and innovation in life cycle assessment by enabling practitioners to work 
+both at the python level (through brightway) and at the GUI level (through the Activity Browser). 
 
- The Activity Browser is an open source software for Life Cycle Assessment (LCA) [@ISO]. 
- It builds on top of the brightway framework [@mutel], which consists of a number of python packages [@brightway2, @bw2calc,  @bw2data, @bw2io, @bw2parameters, @statsarrays]  
- that enable fast and flexible LCA calculations and analyses. The purpose of the Activity Browser is twofold: 
- A) it can act as a graphical user interface (GUI) to brightway and thus greatly increase the productivity of 
- working with brightway - e.g. managing projects and databases, modeling life cycle inventories, and analyzing 
- LCA results. B) it is meant to be an open, community driven software, so that anyone can modify or extend the 
- GUI to meet specific requirements and enable new modeling approaches for LCA. The latter was the original purpose 
- for the development of the Activity Browser, and it has since been used to implement a number of innovative modeling 
- approaches, e.g. as a modeling environment for modular LCA [@steubing, @suter, @mehr]. The Activity Browser is mainly 
- written in Python (but also makes use of JavaScript) and consists roughly of two parts: a GUI part and an interface 
- with brightway. The GUI part deals with user interface elements such as panels, tabs, tables, and wizards. The other 
- part deals with the interface to brightway, but also includes code that extends or introduces new functionality on 
- top of brightway. A central design principle is to focus within the Activity Browser on the user interface, while 
- relying on and introducing new functionality within the brightway framework, wherever possible. Brightway and the 
- Activity Browser can together be seen as two complementary layers to enhance productivity and innovation in life 
- cycle assessment by enabling practitioners to work both at the python layer (through brightway) and through the 
- GUI (Activity Browser). 
+# Acknowledgements
+We kindly acknowledge funding from the EIT Raw Materials (project number 18231). We would also like to thank all the 
+people who have made smaller contributions to the Activity Browser and have stimulated our development through raising 
+issues and feature requests. Finally, we thank the editor and the two anonymous reviewers for their work. 
 
 # References
