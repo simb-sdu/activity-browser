@@ -8,12 +8,16 @@ from .icons import qicons
 from ..signals import signals
 from .widgets import BiosphereUpdater
 from .wizards.settings_wizard import SettingsWizard
+from .wizards.db_export_wizard import DatabaseExportWizard
 
 
 class MenuBar(object):
     def __init__(self, window):
         self.window = window
-        self.update_biosphere_action = QtWidgets.QAction("&Update biosphere...")
+        self.update_biosphere_action = QtWidgets.QAction(
+            window.style().standardIcon(QtWidgets.QStyle.SP_BrowserReload),
+            "&Update biosphere...", None
+        )
         self.biosphere_updater = None
 
         self.menubar = QtWidgets.QMenuBar()
@@ -39,6 +43,11 @@ class MenuBar(object):
             qicons.import_db,
             '&Import database...',
             signals.import_database.emit
+        )
+        menu.addAction(
+            self.window.style().standardIcon(QtWidgets.QStyle.SP_DriveHDIcon),
+            "&Export database...",
+            self.transfer_database_wizard
         )
         menu.addAction(self.update_biosphere_action)
         menu.addAction(
@@ -136,6 +145,9 @@ You should have received a copy of the GNU Lesser General Public License along w
     def open_settings_wizard(self):
         self.settings_wizard = SettingsWizard()
 
+    def transfer_database_wizard(self) -> None:
+        wizard = DatabaseExportWizard()
+
     def biosphere_exists(self) -> None:
         """ Test if the default biosphere exists as a database in the project
         """
@@ -146,4 +158,11 @@ You should have received a copy of the GNU Lesser General Public License along w
         """ Open a popup with progression bar and run through the different
         functions for adding ecoinvent biosphere flows.
         """
-        self.biosphere_updater = BiosphereUpdater()
+        ok = QtWidgets.QMessageBox.question(
+            self.window, "Update biosphere3?",
+            "Updating the biosphere3 database cannot be undone!",
+            buttons=QtWidgets.QMessageBox.Ok | QtWidgets.QMessageBox.Abort,
+            defaultButton=QtWidgets.QMessageBox.Abort
+        )
+        if ok == QtWidgets.QMessageBox.Ok:
+            self.biosphere_updater = BiosphereUpdater()
