@@ -1,0 +1,35 @@
+name: ActivityBrowser
+version: 2.5.0-dev
+
+channels:
+  # Ordering of channels indicates preference for package collection.
+  - https://conda.anaconda.org/conda-forge/
+  - https://repo.anaconda.com/pkgs/main/
+  - https://repo.anaconda.com/pkgs/msys2/ [win]
+  - https://conda.anaconda.org/cmutel/
+  - https://conda.anaconda.org/bsteubing/
+  - https://conda.anaconda.org/haasad/
+  - https://conda.anaconda.org/pascallesage/
+
+specs:
+  - python=3.7
+  - activity-browser-dev>=2019.12.08
+  - arrow
+  - brightway2>=2.1.2
+  - bw2io>=0.7.dev1
+  - bw2data>=3.6.1
+  - eidl>=1.2.0
+  - fuzzywuzzy
+  - matplotlib-base>=2.2.2
+  - networkx
+  - pandas>=0.24.1
+  - pyside2==5.13.1
+  - seaborn
+  - conda
+  - presamples
+  - console_shortcut [win]
+  - menuinst [win]
+  - openssl [win]
+
+license_file: ../LICENSE.txt
+welcome_image: ../activity_browser/icons/main/activitybrowser.png [win]
