@@ -26,7 +26,7 @@ class BaseExchangeTable(ABDataFrameEdit):
     # Fields accepted by brightway to be stored in exchange objects.
     VALID_FIELDS = {
         "amount", "formula", "uncertainty type", "loc", "scale", "shape",
-        "minimum", "maximum"
+        "minimum", "maximum", "dissipation"
     }
 
     def __init__(self, parent=None):
@@ -293,7 +293,7 @@ class ProductExchangeTable(BaseExchangeTable):
 class TechnosphereExchangeTable(BaseExchangeTable):
     COLUMNS = [
         "Amount", "Unit", "Product", "Activity", "Location", "Database",
-        "Uncertainty", "Formula"
+        "Dissipation", "Uncertainty", "Formula"
     ]
     UNCERTAINTY = [
         "loc", "scale", "shape", "minimum", "maximum"
@@ -307,16 +307,18 @@ class TechnosphereExchangeTable(BaseExchangeTable):
         self.setItemDelegateForColumn(3, ViewOnlyDelegate(self))
         self.setItemDelegateForColumn(4, ViewOnlyDelegate(self))
         self.setItemDelegateForColumn(5, ViewOnlyDelegate(self))
-        self.setItemDelegateForColumn(6, UncertaintyDelegate(self))
-        self.setItemDelegateForColumn(7, ViewOnlyDelegate(self))
-        self.setItemDelegateForColumn(8, FloatDelegate(self))
+        self.setItemDelegateForColumn(6, FloatDelegate(self))
+        self.setItemDelegateForColumn(7, UncertaintyDelegate(self))
+        self.setItemDelegateForColumn(8, ViewOnlyDelegate(self))
         self.setItemDelegateForColumn(9, FloatDelegate(self))
         self.setItemDelegateForColumn(10, FloatDelegate(self))
         self.setItemDelegateForColumn(11, FloatDelegate(self))
         self.setItemDelegateForColumn(12, FloatDelegate(self))
-        self.setItemDelegateForColumn(13, FormulaDelegate(self))
+        self.setItemDelegateForColumn(13, FloatDelegate(self))
+        self.setItemDelegateForColumn(14, FormulaDelegate(self))
         self.setDragDropMode(QtWidgets.QTableView.DragDrop)
         self.table_name = "technosphere"
+        self.dissipation_col = 0
         self.drag_model = True
 
     @property
@@ -326,6 +328,11 @@ class TechnosphereExchangeTable(BaseExchangeTable):
         end = columns[columns.index("Formula"):]
         return start + ["pedigree"] + self.UNCERTAINTY + end
 
+    def build_df(self) -> pd.DataFrame:
+        df = super().build_df()
+        self.dissipation_col = df.columns.get_loc("Dissipation")
+        return df
+
     def create_row(self, exchange: ExchangeProxyBase) -> (dict, object):
         row, adj_act = super().create_row(exchange)
         row.update({
@@ -333,6 +340,7 @@ class TechnosphereExchangeTable(BaseExchangeTable):
             "Activity": adj_act.get("name"),
             "Location": adj_act.get("location", "Unknown"),
             "Database": adj_act.get("database"),
+            "Dissipation": exchange.get("dissipation"),
             "Uncertainty": exchange.get("uncertainty type", 0),
             "Formula": exchange.get("formula"),
         })
@@ -381,7 +389,7 @@ class TechnosphereExchangeTable(BaseExchangeTable):
 
 class BiosphereExchangeTable(BaseExchangeTable):
     COLUMNS = [
-        "Amount", "Unit", "Flow Name", "Compartments", "Database",
+        "Amount", "Unit", "Flow Name", "Compartments", "Database", "Dissipation",
         "Uncertainty", "Formula"
     ]
     UNCERTAINTY = [
@@ -395,15 +403,17 @@ class BiosphereExchangeTable(BaseExchangeTable):
         self.setItemDelegateForColumn(2, ViewOnlyDelegate(self))
         self.setItemDelegateForColumn(3, ViewOnlyDelegate(self))
         self.setItemDelegateForColumn(4, ViewOnlyDelegate(self))
-        self.setItemDelegateForColumn(5, UncertaintyDelegate(self))
-        self.setItemDelegateForColumn(6, ViewOnlyDelegate(self))
-        self.setItemDelegateForColumn(7, FloatDelegate(self))
+        self.setItemDelegateForColumn(5, FloatDelegate(self))
+        self.setItemDelegateForColumn(6, UncertaintyDelegate(self))
+        self.setItemDelegateForColumn(7, ViewOnlyDelegate(self))
         self.setItemDelegateForColumn(8, FloatDelegate(self))
         self.setItemDelegateForColumn(9, FloatDelegate(self))
         self.setItemDelegateForColumn(10, FloatDelegate(self))
         self.setItemDelegateForColumn(11, FloatDelegate(self))
-        self.setItemDelegateForColumn(12, FormulaDelegate(self))
+        self.setItemDelegateForColumn(12, FloatDelegate(self))
+        self.setItemDelegateForColumn(13, FormulaDelegate(self))
         self.table_name = "biosphere"
+        self.dissipation_col = 0
         self.setDragDropMode(QtWidgets.QTableView.DropOnly)
 
     @property
@@ -413,12 +423,18 @@ class BiosphereExchangeTable(BaseExchangeTable):
         end = columns[columns.index("Formula"):]
         return start + ["pedigree"] + self.UNCERTAINTY + end
 
+    def build_df(self) -> pd.DataFrame:
+        df = super().build_df()
+        self.dissipation_col = df.columns.get_loc("Dissipation")
+        return df
+
     def create_row(self, exchange) -> (dict, object):
         row, adj_act = super().create_row(exchange)
         row.update({
             "Flow Name": adj_act.get("name"),
             "Compartments": " - ".join(adj_act.get('categories', [])),
             "Database": adj_act.get("database"),
+            "Dissipation": exchange.get("dissipation"),
             "Uncertainty": exchange.get("uncertainty type", 0),
             "Formula": exchange.get("formula"),
         })
