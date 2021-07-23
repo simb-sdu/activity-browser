@@ -131,7 +131,7 @@ AB_names_to_bw_keys = {
     "Activity": "name",
     "Unit": "unit",
     "Location": "location",
-    "Dissipation": "dissipation",
+    "Incorporated": "incorporated",
     "Database": "database",
     "Uncertainty": "uncertainty type",
     "Formula": "formula",

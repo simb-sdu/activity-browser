@@ -26,7 +26,7 @@ class BaseExchangeTable(ABDataFrameEdit):
     # Fields accepted by brightway to be stored in exchange objects.
     VALID_FIELDS = {
         "amount", "formula", "uncertainty type", "loc", "scale", "shape",
-        "minimum", "maximum", "dissipation"
+        "minimum", "maximum", "incorporated"
     }
 
     def __init__(self, parent=None):
@@ -293,7 +293,7 @@ class ProductExchangeTable(BaseExchangeTable):
 class TechnosphereExchangeTable(BaseExchangeTable):
     COLUMNS = [
         "Amount", "Unit", "Product", "Activity", "Location", "Database",
-        "Dissipation", "Uncertainty", "Formula"
+        "Incorporated", "Uncertainty", "Formula"
     ]
     UNCERTAINTY = [
         "loc", "scale", "shape", "minimum", "maximum"
@@ -318,7 +318,7 @@ class TechnosphereExchangeTable(BaseExchangeTable):
         self.setItemDelegateForColumn(14, FormulaDelegate(self))
         self.setDragDropMode(QtWidgets.QTableView.DragDrop)
         self.table_name = "technosphere"
-        self.dissipation_col = 0
+        self.incorporated_col = 0
         self.drag_model = True
 
     @property
@@ -330,7 +330,7 @@ class TechnosphereExchangeTable(BaseExchangeTable):
 
     def build_df(self) -> pd.DataFrame:
         df = super().build_df()
-        self.dissipation_col = df.columns.get_loc("Dissipation")
+        self.incorporated_col = df.columns.get_loc("Incorporated")
         return df
 
     def create_row(self, exchange: ExchangeProxyBase) -> (dict, object):
@@ -340,7 +340,7 @@ class TechnosphereExchangeTable(BaseExchangeTable):
             "Activity": adj_act.get("name"),
             "Location": adj_act.get("location", "Unknown"),
             "Database": adj_act.get("database"),
-            "Dissipation": exchange.get("dissipation"),
+            "Incorporated": exchange.get("incorporated"),
             "Uncertainty": exchange.get("uncertainty type", 0),
             "Formula": exchange.get("formula"),
         })
@@ -389,7 +389,7 @@ class TechnosphereExchangeTable(BaseExchangeTable):
 
 class BiosphereExchangeTable(BaseExchangeTable):
     COLUMNS = [
-        "Amount", "Unit", "Flow Name", "Compartments", "Database", "Dissipation",
+        "Amount", "Unit", "Flow Name", "Compartments", "Database", "Incorporated",
         "Uncertainty", "Formula"
     ]
     UNCERTAINTY = [
@@ -413,7 +413,7 @@ class BiosphereExchangeTable(BaseExchangeTable):
         self.setItemDelegateForColumn(12, FloatDelegate(self))
         self.setItemDelegateForColumn(13, FormulaDelegate(self))
         self.table_name = "biosphere"
-        self.dissipation_col = 0
+        self.incorporated_col = 0
         self.setDragDropMode(QtWidgets.QTableView.DropOnly)
 
     @property
@@ -425,7 +425,7 @@ class BiosphereExchangeTable(BaseExchangeTable):
 
     def build_df(self) -> pd.DataFrame:
         df = super().build_df()
-        self.dissipation_col = df.columns.get_loc("Dissipation")
+        self.incorporated_col = df.columns.get_loc("Incorporated")
         return df
 
     def create_row(self, exchange) -> (dict, object):
@@ -434,7 +434,7 @@ class BiosphereExchangeTable(BaseExchangeTable):
             "Flow Name": adj_act.get("name"),
             "Compartments": " - ".join(adj_act.get('categories', [])),
             "Database": adj_act.get("database"),
-            "Dissipation": exchange.get("dissipation"),
+            "Incorporated": exchange.get("incorporated"),
             "Uncertainty": exchange.get("uncertainty type", 0),
             "Formula": exchange.get("formula"),
         })
