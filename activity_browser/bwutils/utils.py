@@ -5,7 +5,7 @@ from typing import Iterable, List, NamedTuple, Optional
 
 import brightway2 as bw
 from bw2data import config
-from bw2data.backends.peewee import ActivityDataset, ExchangeDataset
+from bw2data.backends import ActivityDataset, ExchangeDataset
 from bw2data.parameters import (
     ProjectParameter, DatabaseParameter, ActivityParameter,
     ParameterizedExchange,

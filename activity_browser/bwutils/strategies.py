@@ -3,7 +3,7 @@ import hashlib
 from typing import Collection
 
 import brightway2 as bw
-from bw2data.backends.peewee import ActivityDataset, sqlite3_lci_db
+from bw2data.backends import ActivityDataset, sqlite3_lci_db
 from bw2data.errors import ValidityError
 from bw2io.errors import StrategyError
 from bw2io.strategies.generic import format_nonunique_key_error, link_iterable_by_fields

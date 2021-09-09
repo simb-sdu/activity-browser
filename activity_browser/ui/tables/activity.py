@@ -87,6 +87,9 @@ class BaseExchangeTable(ABDataFrameView):
         source_table = event.source()
         keys = [source_table.get_key(i) for i in source_table.selectedIndexes()]
         event.accept()
+        #TODO remove debug print
+        print(source_table)
+        print(keys)
         signals.exchanges_add.emit(keys, self.key)
 
     def get_usable_parameters(self):
@@ -105,6 +108,7 @@ class ProductExchangeTable(BaseExchangeTable):
         self.setItemDelegateForColumn(1, StringDelegate(self))
         self.setItemDelegateForColumn(2, StringDelegate(self))
         self.setItemDelegateForColumn(3, FormulaDelegate(self))
+        self.setItemDelegateForColumn(4, StringDelegate(self))
         self.setDragDropMode(QtWidgets.QTableView.DragDrop)
         self.table_name = "product"
 
@@ -121,6 +125,8 @@ class ProductExchangeTable(BaseExchangeTable):
         if (getattr(source, "table_name", "") == "technosphere" or
                 getattr(source, "technosphere", False) is True):
             event.accept()
+        else:
+            print("item not accepted attr is : ",getattr(source, "table_name", ""))
 
 
 class TechnosphereExchangeTable(BaseExchangeTable):

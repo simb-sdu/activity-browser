@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import brightway2 as bw
-from bw2data.backends.peewee import sqlite3_lci_db
+from bw2data.backends import sqlite3_lci_db
 from bw2data.parameters import Group
 from PySide2 import QtWidgets
 from PySide2.QtCore import QObject, Slot

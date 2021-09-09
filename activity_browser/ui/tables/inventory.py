@@ -131,6 +131,7 @@ class ActivitiesBiosphereTable(ABDataFrameView):
                 self.model.get_key(self.currentIndex())
             )
         )
+        menu.addAction(self.info_action)
         menu.addAction(self.new_activity_action)
         menu.addAction(self.duplicate_activity_action)
         menu.addAction(self.delete_activity_action)
@@ -159,6 +160,7 @@ class ActivitiesBiosphereTable(ABDataFrameView):
     @Slot(QtCore.QModelIndex, name="openActivityTab")
     def open_activity_tab(self, proxy: QtCore.QModelIndex) -> None:
         key = self.model.get_key(proxy)
+        print("open activity tab key : ",key)
         signals.open_activity_tab.emit(key)
         signals.add_activity_to_history.emit(key)
 
@@ -176,6 +178,9 @@ class ActivitiesBiosphereTable(ABDataFrameView):
     def duplicate_activities(self) -> None:
         self.model.duplicate_activities(self.selectedIndexes())
 
+    @Slot(name="ActivityInfo")
+    def activite_info(self) -> None:
+        print(self.model.get_key())
     @Slot(name="duplicateActivitiesToOtherDb")
     def duplicate_activities_to_db(self) -> None:
         self.model.duplicate_activities_to_db(self.selectedIndexes())

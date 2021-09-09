@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import brightway2 as bw
-from bw2data.backends.peewee import ActivityDataset
+from bw2data.backends import ActivityDataset
 import numpy as np
 import pandas as pd
 

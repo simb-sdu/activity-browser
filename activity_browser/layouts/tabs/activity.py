@@ -35,6 +35,7 @@ class ActivitiesTab(ABTab):
         if key not in self.tabs:
             act = bw.get_activity(key)
             if not bc.is_technosphere_activity(act):
+                print("Key is no technosphere")
                 return
             new_tab = ActivityTab(key)
             self.tabs[key] = new_tab

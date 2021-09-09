@@ -2,7 +2,7 @@
 from typing import Iterable
 
 import brightway2 as bw
-from bw2data.backends.peewee import ActivityDataset
+from bw2data.backends import ActivityDataset
 import pandas as pd
 from PySide2.QtCore import QModelIndex, Slot
 

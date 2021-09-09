@@ -57,7 +57,7 @@ class ActivitiesBiosphereModel(DragPandasModel):
         self.database_name = None
         self.act_fields = lambda: AB_metadata.get_existing_fields(["reference product", "name", "location", "unit"])
         self.ef_fields = lambda: AB_metadata.get_existing_fields(["name", "categories", "type", "unit"])
-        self.technosphere = True
+        #self.technosphere = True
         signals.database_selected.connect(self.sync)
         signals.database_changed.connect(self.check_database_changed)
 

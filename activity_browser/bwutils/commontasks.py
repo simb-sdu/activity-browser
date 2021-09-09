@@ -143,9 +143,16 @@ def is_technosphere_activity(activity: ActivityProxyBase) -> bool:
     above method if the field does not exist.
     """
     if "type" not in activity:
+        print("No type in activity")
         return is_technosphere_db(activity.key[0])
     return activity.get("type") == "process"
 
+def is_product_activity(activity: ActivityProxyBase) -> bool:
+    """Adding the product type activities for the identifying and opening of products"""
+    if "type" not in activity:
+        print("No type in activity")
+        return is_technosphere_db(activity.key[0])
+    return activity.get("type") == "good" or "waste"
 
 def count_database_records(name: str) -> int:
     """To account for possible brightway database types that do not implement

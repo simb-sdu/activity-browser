@@ -22,7 +22,7 @@ class BaseExchangeModel(EditablePandasModel):
     # Fields accepted by brightway to be stored in exchange objects.
     VALID_FIELDS = {
         "amount", "formula", "uncertainty type", "loc", "scale", "shape",
-        "minimum", "maximum"
+        "minimum", "maximum","type"
     }
 
     def __init__(self, key=None, parent=None):
@@ -185,19 +185,20 @@ class BaseExchangeModel(EditablePandasModel):
 
 
 class ProductExchangeModel(BaseExchangeModel):
-    COLUMNS = ["Amount", "Unit", "Product", "Formula"]
+    COLUMNS = ["Amount", "Unit", "Product", "Formula","Type"]
 
     def create_row(self, exchange) -> dict:
         row = super().create_row(exchange)
         product = exchange.input.get("reference product") or exchange.input.get("name")
-        row.update({"Product": product, "Formula": exchange.get("formula")})
+        product_type = exchange.input.get("type")
+        row.update({"Product": product, "Formula": exchange.get("formula"), "Type": product_type})
         return row
 
 
 class TechnosphereExchangeModel(BaseExchangeModel):
     COLUMNS = [
         "Amount", "Unit", "Product", "Activity", "Location", "Database",
-        "Uncertainty", "Formula"
+        "Uncertainty", "Formula","Type"
     ]
     UNCERTAINTY = [
         "loc", "scale", "shape", "minimum", "maximum"
@@ -221,6 +222,7 @@ class TechnosphereExchangeModel(BaseExchangeModel):
                 "Database": act.get("database"),
                 "Uncertainty": exchange.get("uncertainty type", 0),
                 "Formula": exchange.get("formula"),
+                "Type": exchange.get("type")
             })
             try:
                 matrix = PedigreeMatrix.from_dict(exchange.get("pedigree", {}))

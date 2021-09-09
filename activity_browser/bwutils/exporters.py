@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import Union
 
 import brightway2 as bw
-from bw2data.utils import safe_filename
+from bw_processing import safe_filename
 from bw2io.export.excel import CSVFormatter, create_valid_worksheet_name
 from bw2io.export.csv import reformat
 import xlsxwriter

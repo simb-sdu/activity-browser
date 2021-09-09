@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 from typing import Iterable, Optional
 
-from bw2calc.matrices import TechnosphereBiosphereMatrixBuilder as MB
 import numpy as np
 import pandas as pd
-
+import bw_processing as bwp
 from ..commontasks import format_activity_label
 from ..multilca import MLCA, Contributions
 from ..utils import Index
@@ -121,7 +120,7 @@ class SuperstructureMLCA(MLCA):
                     delattr(self.lca, "solver")
 
             if kind == "technosphere":
-                MB.fix_supply_use(idx, sample)
+                bwp.fix_supply_use(idx, sample)
             matrix[idx["row"], idx["col"], ] = sample
 
     def _perform_calculations(self):

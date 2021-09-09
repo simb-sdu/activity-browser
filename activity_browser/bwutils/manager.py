@@ -7,7 +7,7 @@ from typing import Iterable, List, Optional, Tuple
 
 from asteval import Interpreter
 from bw2calc import LCA
-from bw2data.backends.peewee import ExchangeDataset
+from bw2data.backends import ExchangeDataset
 from bw2data.parameters import (
     ProjectParameter, DatabaseParameter, ActivityParameter,
     ParameterizedExchange, get_new_symbols

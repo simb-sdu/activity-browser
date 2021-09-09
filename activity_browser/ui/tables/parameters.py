@@ -170,6 +170,7 @@ class ActivityParameterTable(BaseParameterTable):
     def dragMoveEvent(self, event: QDragMoveEvent) -> None:
         """ Check that the dragged row is from the databases table
         """
+
         if hasattr(event.source(), "technosphere"):
             event.accept()
 

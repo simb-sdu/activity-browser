@@ -3,7 +3,7 @@ from typing import Iterator, Optional, Union
 import uuid
 
 import brightway2 as bw
-from bw2data.backends.peewee.proxies import Activity, ExchangeProxyBase
+from bw2data.proxies import ActivityProxyBase, ExchangeProxyBase
 from PySide2.QtCore import QObject, Slot
 from PySide2 import QtWidgets
 
@@ -162,7 +162,7 @@ class ActivityController(QObject):
                 signals.open_activity_tab.emit(key)
 
     @Slot(str, object, name="copyActivityToDb")
-    def duplicate_activity_to_db(self, target_db: str, activity: Activity):
+    def duplicate_activity_to_db(self, target_db: str, activity: ActivityProxyBase):
         new_key = self._copy_activity(target_db, activity)
         # only process database immediately if small
         if bc.count_database_records(target_db) < 50:
@@ -173,7 +173,7 @@ class ActivityController(QObject):
         signals.open_activity_tab.emit(new_key)
 
     @staticmethod
-    def _copy_activity(target: str, act: Activity) -> tuple:
+    def _copy_activity(target: str, act: ActivityProxyBase) -> tuple:
         new_code = ActivityController.generate_copy_code((target, act['code']))
         new_key = (target, new_code)
         act.copy(code=new_code, database=target)
@@ -184,6 +184,7 @@ class ActivityController(QObject):
     @Slot(tuple, str, object, name="modifyActivity")
     def modify_activity(key: tuple, field: str, value: object) -> None:
         activity = bw.get_activity(key)
+
         activity[field] = value
         activity.save()
         bw.databases.set_modified(key[0])
@@ -191,10 +192,12 @@ class ActivityController(QObject):
         signals.database_changed.emit(key[0])
 
     @staticmethod
-    def _retrieve_activities(data: Union[tuple, Iterator[tuple]]) -> Iterator[Activity]:
+    def _retrieve_activities(data: Union[tuple, Iterator[tuple]]) -> Iterator[ActivityProxyBase]:
         """Given either a key-tuple or a list of key-tuples, return a list
         of activities.
         """
+        print("Retrieve_activities",bw.get_activity(data))
+        print(bw.get_activity(k) for k in data)
         return [bw.get_activity(data)] if isinstance(data, tuple) else [
             bw.get_activity(k) for k in data
         ]

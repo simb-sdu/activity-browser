@@ -180,7 +180,7 @@ class DatabaseParameterModel(BaseParameterModel):
 class ActivityParameterModel(BaseParameterModel):
     COLUMNS = [
         "name", "amount", "formula", "product", "activity", "location",
-        "group", "order", "key"
+        "group", "order", "key", "type"
     ]
 
     def __init__(self, parent=None):

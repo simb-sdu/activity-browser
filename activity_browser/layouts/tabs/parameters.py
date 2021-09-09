@@ -2,7 +2,7 @@
 from pathlib import Path
 
 import brightway2 as bw
-from bw2data.filesystem import safe_filename
+from bw_processing import safe_filename
 import pandas as pd
 from PySide2.QtCore import Slot, QSize
 from PySide2.QtWidgets import (

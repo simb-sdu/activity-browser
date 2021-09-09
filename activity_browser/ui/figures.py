@@ -3,7 +3,7 @@ import math
 import os
 
 import brightway2 as bw
-from bw2data.filesystem import safe_filename
+from bw_processing import safe_filename
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
 from matplotlib.figure import Figure

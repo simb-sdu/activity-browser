@@ -3,7 +3,7 @@ import os
 from functools import wraps
 from typing import Optional
 
-from bw2data.filesystem import safe_filename
+from bw_processing import safe_filename
 from PySide2.QtCore import QSize, QSortFilterProxyModel, Qt, Slot
 from PySide2.QtWidgets import QFileDialog, QTableView, QTreeView
 from PySide2.QtGui import QKeyEvent
