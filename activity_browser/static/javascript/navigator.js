@@ -197,6 +197,9 @@ d3.demo.canvas = function() {
             //]);
         };
 
+        //TODO: Place legend on top of the SVG or better and limit the viewport area
+        //TODO: UX improvement, more space for the graph itself
+
         var zoomHandler = function() {
             panCanvas.attr("transform", d3.event.transform);
             // here we filter out the emitting of events that originated outside of the normal ZoomBehavior; this prevents an infinite loop
@@ -488,6 +491,7 @@ const cartographer = function() {
     cartographer.update_graph = function (json_data) {
         console.log("Updating Graph");
         let data = JSON.parse(json_data);
+        console.log(data)
         if(is_sankey_mode) {
             max_impact = data["max_impact"];
 	        console.log("Max impact:", max_impact)
@@ -519,6 +523,24 @@ const cartographer = function() {
                 div.transition()
                     .duration(500)
                     .style("opacity", 0);
+            });
+            nodes.on("contextmenu", function(node, index) {
+                // make dictionary containing the node key and how the user clicked on it
+                // see also mouse events: https://www.w3schools.com/jsref/obj_mouseevent.asp
+                let click_dict = {
+                    "database": graph.node(node).database,
+                    "id": graph.node(node).id,
+                    "mouse": event.button,
+                    "keyboard": {
+                        "shift": event.shiftKey,
+                        "alt": event.altKey,
+                    }
+                }
+                console.log(click_dict)
+                window.bridge.node_right_clicked(JSON.stringify(click_dict))
+
+                //Can create a makeshhift context menu in HTML too
+                //d3.event.preventDefault();
             });
 
             // change node fill based on impact
@@ -554,7 +576,8 @@ const cartographer = function() {
             location: n['location'],
             id: n['id'],
             database: n['db'],
-            class: n['class'],
+            class: n['class']
+
         };
 
         if(is_sankey_mode) {
@@ -683,7 +706,7 @@ d3.select("#downloadSVGtButtonqPWKOg").on("click", function() {
 });
 
 // Construct 'render' object and initialize cartographer.
-var render = dagreD3.render();
+var render = dagreD3.render(); //TODO: Investigate replacing dagre: Just layouting, retain D3 as it is mostly for rendering
 var graph = new dagre.graphlib.Graph({ multigraph: true }).setGraph({});
 cartographer();
 
@@ -751,3 +774,8 @@ new QWebChannel(qt.webChannelTransport, function (channel) {
     window.bridge.style.connect(cartographer.update_svg_style);
 });
 
+function updateBackground(color) {
+    let root = document.documentElement;
+    console.log(color)
+    root.style.setProperty('--bgcolor_set', color);
+}

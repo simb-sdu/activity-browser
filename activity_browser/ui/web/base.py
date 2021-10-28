@@ -5,8 +5,9 @@ import json
 import os
 from typing import Type
 
-from PySide2 import QtWebEngineWidgets, QtWebChannel, QtWidgets
+from PySide2 import QtCore,QtWebEngineWidgets, QtWebChannel, QtWidgets
 from PySide2.QtCore import Signal, Slot, QObject, Qt, QUrl
+from PySide2.QtWidgets import QMenu, QAction
 from bw2data.filesystem import safe_filename
 
 from . import webutils
@@ -34,8 +35,18 @@ class BaseNavigatorWidget(QtWidgets.QWidget):
         self.channel.registerObject('bridge', self.bridge)
         self.view = QtWebEngineWidgets.QWebEngineView()
         self.view.loadFinished.connect(self.load_finished_handler)
-        self.view.setContextMenuPolicy(Qt.PreventContextMenu)
+
+        #self.view.setContextMenuPolicy(Qt.PreventContextMenu)
+        self.view.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        self.view.customContextMenuRequested.connect(self.on_context_menu)
+
         self.view.page().setWebChannel(self.channel)
+
+        # Debug
+        self.debugview = QtWebEngineWidgets.QWebEngineView()
+        self.view.page().setDevToolsPage(self.debugview.page())
+        self.debugview.show()
+
         self.url = QUrl.fromLocalFile(self.HTML_FILE)
         self.css_file = css_file
 
@@ -46,6 +57,15 @@ class BaseNavigatorWidget(QtWidgets.QWidget):
         self.button_forward = QtWidgets.QPushButton(qicons.forward, "")
         self.button_refresh = QtWidgets.QPushButton("Refresh HTML")
         self.button_random_activity = QtWidgets.QPushButton("Random Activity")
+        self.change_background = QtWidgets.QPushButton(qicons.settings, "")
+
+    def on_context_menu(self, pos):
+        context = QMenu(self)
+        context_menu_item = QAction("RED Alert", self)
+        context_menu_item.triggered.connect(
+            lambda: self.update_background)
+        context.addAction(context_menu_item)
+        context.popup(self.mapToGlobal(pos))
 
     def load_finished_handler(self, *args, **kwargs) -> None:
         """Executed when webpage has been loaded for the first time or refreshed.
@@ -59,6 +79,7 @@ class BaseNavigatorWidget(QtWidgets.QWidget):
     def connect_signals(self) -> None:
         self.button_toggle_help.clicked.connect(self.toggle_help)
         self.button_back.clicked.connect(self.go_back)
+        self.change_background.clicked.connect(self.update_background)
         self.button_forward.clicked.connect(self.go_forward)
         self.button_refresh.clicked.connect(self.draw_graph)
         self.button_random_activity.clicked.connect(self.random_graph)
@@ -83,6 +104,9 @@ class BaseNavigatorWidget(QtWidgets.QWidget):
             self.send_json()
         else:
             signals.new_statusbar_message.emit("No data to go back to.")
+
+    def update_background(self) -> None:
+        self.view.page().runJavaScript("updateBackground('red');")
 
     def send_json(self) -> None:
         self.bridge.graph_ready.emit(self.graph.json_data)
@@ -150,6 +174,19 @@ class Bridge(QObject):
             svg: string of svg
         """
         to_svg(svg)
+
+    @Slot(str, name="node_right_clicked")
+    def node_right_clicked(self, click_text: str):
+        """ Is called when a node is clicked in Javascript.
+        Args:
+            click_text: string of a serialized json dictionary describing
+            - the node that was clicked on
+            - mouse button and additional keys pressed
+        """
+        click_dict = json.loads(click_text)
+        click_dict["key"] = (click_dict["database"], click_dict["id"])  # since JSON does not know tuples
+        print("Click information: ", click_dict)
+        #self.update_graph.emit(click_dict)
 
 
 class BaseGraph(object):

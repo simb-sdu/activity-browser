@@ -146,6 +146,7 @@ class SankeyNavigatorWidget(BaseNavigatorWidget):
         hl_controls.addWidget(self.button_refresh)
         hl_controls.addWidget(self.button_random_activity)
         hl_controls.addWidget(self.button_toggle_help)
+        hl_controls.addWidget(self.change_background)
         hl_controls.addStretch(1)
 
         # Checkboxes Layout

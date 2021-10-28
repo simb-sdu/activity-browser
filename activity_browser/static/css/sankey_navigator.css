@@ -1,4 +1,12 @@
+/* Define your CSS variables */
+:root {
+  --bgcolor_set: white; /* Set default value */
+}
 
+/* Use the variable in a style class*/
+.some_style {
+  background: var(--bgcolor_set);
+}
 
 
 /*to make the svg resizable*/ /*
@@ -149,6 +157,12 @@ text {
   stroke: #f4425c;
   fill: #fff;
   stroke-width: 3px;
+}
+
+.node.market {
+  stroke: black;
+  fill: white;
+  stroke-width: 5px;
 }
 
 /* Edges */
