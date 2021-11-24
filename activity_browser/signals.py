@@ -101,9 +101,7 @@ class Signals(QObject):
     calculation_setup_selected = Signal(str)
 
     # LCA Results
-    lca_calculation = Signal(str)
-    lca_presamples_calculation = Signal(str, str)
-    lca_scenario_calculation = Signal(str, object)
+    lca_calculation = Signal(dict)
     lca_results_tabs_changed = Signal()
 
     # Impact Categories & Characterization Factors

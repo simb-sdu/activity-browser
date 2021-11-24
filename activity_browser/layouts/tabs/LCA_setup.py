@@ -106,9 +106,13 @@ class LCASetupTab(QtWidgets.QWidget):
         self.copy_cs_button = QtWidgets.QPushButton(qicons.copy, "Copy")
         self.rename_cs_button = QtWidgets.QPushButton(qicons.edit, "Rename")
         self.delete_cs_button = QtWidgets.QPushButton(qicons.delete, "Delete")
+
+        self.calculate_button = QtWidgets.QPushButton(qicons.calculate, "Calculate")
         self.calculation_type = QtWidgets.QComboBox()
         self.calculation_type.addItems(["Standard LCA", "Scenario LCA", "Presamples LCA"])
-        self.calculate_button = QtWidgets.QPushButton(qicons.calculate, "Calculate")
+        self.export_only = QtWidgets.QCheckBox("Export for brightway only", self)
+        self.export_only.setChecked(False)
+
         self.presamples = PresamplesTuple(
             QtWidgets.QLabel("Prepared scenarios:"),
             PresamplesList(self),
@@ -134,6 +138,7 @@ class LCASetupTab(QtWidgets.QWidget):
         calc_row.addWidget(self.presamples.button)
         calc_row.addWidget(self.scenario_calc_btn)
         calc_row.addWidget(self.calculation_type)
+        calc_row.addWidget(self.export_only)
         calc_row.addWidget(self.presamples.label)
         calc_row.addWidget(self.presamples.list)
         calc_row.addWidget(self.presamples.remove)
@@ -201,13 +206,22 @@ class LCASetupTab(QtWidgets.QWidget):
 
     @Slot(name="calculationDefault")
     def start_calculation(self):
-        signals.lca_calculation.emit(self.list_widget.name)
+        data = {
+            'cs_name': self.list_widget.name,
+            'export_only': self.export_only.isChecked(),
+            'calculation_type': 'simple',
+        }
+        signals.lca_calculation.emit(data)
 
     @Slot(name="calculationPresamples")
     def presamples_calculation(self):
-        signals.lca_presamples_calculation.emit(
-            self.list_widget.name, self.presamples.list.selection
-        )
+        data = {
+            'cs_name': self.list_widget.name,
+            'export_only': self.export_only.isChecked(),
+            'calculation_type': 'presamples',
+            'data': self.presamples.list.selection,
+        }
+        signals.lca_calculation.emit(data)
 
     @Slot(name="removePresamplesPackage")
     def remove_presamples_package(self):
@@ -225,8 +239,13 @@ class LCASetupTab(QtWidgets.QWidget):
     @Slot(name="calculationScenario")
     def scenario_calculation(self) -> None:
         """Construct index / value array and begin LCA calculation."""
-        data = self.scenario_panel.combined_dataframe()
-        signals.lca_scenario_calculation.emit(self.list_widget.name, data)
+        data = {
+            'cs_name': self.list_widget.name,
+            'export_only': self.export_only.isChecked(),
+            'calculation_type': 'scenario',
+            'data': self.scenario_panel.combined_dataframe(),
+        }
+        signals.lca_calculation.emit(data)
 
     @Slot(name="toggleDefaultCalculation")
     def set_default_calculation_setup(self):

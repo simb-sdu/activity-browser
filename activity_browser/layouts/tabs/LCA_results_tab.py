@@ -28,13 +28,20 @@ class LCAResultsTab(ABTab):
         self.connect_signals()
 
     def connect_signals(self):
-        signals.lca_calculation.connect(self.generate_setup)
-        signals.lca_presamples_calculation.connect(self.generate_setup)
-        signals.lca_scenario_calculation.connect(self.generate_setup)
+        signals.lca_calculation.connect(self.lca_calculation)
         signals.delete_calculation_setup.connect(self.remove_setup)
         self.tabCloseRequested.connect(self.close_tab)
         signals.project_selected.connect(self.close_all)
         signals.parameters_changed.connect(self.close_all)
+
+    def lca_calculation(self, data: dict):
+        """Either export the data as pickle for further analysis in brightway, or start the regular AB LCA results"""
+
+        if data.get('export_only'):
+            print('Exporting MLCA, contributions, and Monte Carlo objects in pickle format for further analysis in python')
+        else:
+            self.generate_setup(data=data)
+
 
     @Slot(str, name="removeSetup")
     def remove_setup(self, name: str):
@@ -43,21 +50,23 @@ class LCAResultsTab(ABTab):
             index = self.indexOf(self.tabs[name])
             self.close_tab(index)
 
-    @Slot(str, name="generateSimpleLCA")
-    @Slot(str, str, name="generatePresamplesLCA")
-    @Slot(str, object, name="generateSuperstructureLCA")
-    def generate_setup(self, cs_name: str, presamples: Union[str, pd.DataFrame] = None):
+    @Slot(str, name="generateSetup")
+    def generate_setup(self, data:dict):  #cs_name: str, presamples: Union[str, pd.DataFrame] = None):
         """ Check if the calculation setup exists, if it does, remove it, then create a new one. """
-        if isinstance(presamples, str):
+
+        cs_name = data.get('cs_name', 'new calculation')
+        calculation_type = data.get('calculation_type', 'simple')
+
+        if calculation_type == 'presamples':  #(presamples, str):
             name = "{}[Presamples]".format(cs_name)
-        elif isinstance(presamples, pd.DataFrame):
+        elif calculation_type == 'scenario':
             name = "{}[Scenarios]".format(cs_name)
         else:
             name = cs_name
         self.remove_setup(name)
 
         try:
-            new_tab = LCAResultsSubTab(cs_name, presamples, self)
+            new_tab = LCAResultsSubTab(data, self)
             self.tabs[name] = new_tab
             self.addTab(new_tab, name)
             self.select_tab(self.tabs[name])
