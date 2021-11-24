@@ -8,7 +8,6 @@ from collections import namedtuple
 import traceback
 from typing import List, Optional, Union
 
-from bw2calc.errors import BW2CalcError
 from PySide2.QtWidgets import (
     QWidget, QTabWidget, QVBoxLayout, QHBoxLayout, QScrollArea, QRadioButton,
     QLabel, QLineEdit, QCheckBox, QPushButton, QComboBox, QTableView,
@@ -99,7 +98,7 @@ class LCAResultsSubTab(QTabWidget):
         self.setVisible(False)
         self.visible = False
 
-        self.mlca, self.contributions, self.mc = calculations.do_calculations(data)
+        self.mlca, self.contributions, self.mc = calculations.do_LCA_calculations(data)
         self.method_dict = bc.get_LCIA_method_name_dict(self.mlca.methods)
         self.single_func_unit = True if len(self.mlca.func_units) == 1 else False
         self.single_method = True if len(self.mlca.methods) == 1 else False

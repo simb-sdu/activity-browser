@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
-from typing import Union
 import traceback
 
 from bw2calc.errors import BW2CalcError
 from PySide2.QtCore import Qt, Slot
 from PySide2.QtWidgets import QMessageBox, QVBoxLayout
-import pandas as pd
 
 from .LCA_results_tabs import LCAResultsSubTab
 from ..panels import ABTab
 from ...signals import signals
+
+from ...bwutils.calculations import do_LCA_calculations
 
 
 class LCAResultsTab(ABTab):
@@ -39,6 +39,9 @@ class LCAResultsTab(ABTab):
 
         if data.get('export_only'):
             print('Exporting MLCA, contributions, and Monte Carlo objects in pickle format for further analysis in python')
+            mlca, contributions, mc = do_LCA_calculations(data)
+
+            signals.export_as_pickle.emit([mlca.lca_scores])
         else:
             self.generate_setup(data=data)
 

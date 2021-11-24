@@ -6,6 +6,7 @@ from .project import (
     ProjectController, CSetupController, ImpactCategoryController
 )
 from .utils import UtilitiesController
+from .generic import GenericController
 
 controllers = {
     "activity_controller": ActivityController,
@@ -16,4 +17,5 @@ controllers = {
     "cs_controller": CSetupController,
     "ia_controller": ImpactCategoryController,
     "utils_controller": UtilitiesController,
+    "generic_controller": GenericController,
 }
