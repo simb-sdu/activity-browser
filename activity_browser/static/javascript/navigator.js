@@ -524,9 +524,20 @@ const cartographer = function() {
                     .duration(500)
                     .style("opacity", 0);
             });
-            nodes.on("contextmenu", function(node, index) {
+
+            // change node fill based on impact
+            var node_rects = panCanvas.selectAll("g .node rect")
+            .on("click", handleMouseClick)
+            .style("fill", function(d) {
+                console.log(color(graph.node(d).ind_norm));
+                return color(graph.node(d).ind_norm);
+            });
+        }
+
+        nodes.on("contextmenu", function(node, index) {
                 // make dictionary containing the node key and how the user clicked on it
                 // see also mouse events: https://www.w3schools.com/jsref/obj_mouseevent.asp
+                // event.screenX and screenY maybe gives correct location
                 let click_dict = {
                     "database": graph.node(node).database,
                     "id": graph.node(node).id,
@@ -539,18 +550,9 @@ const cartographer = function() {
                 console.log(click_dict)
                 window.bridge.node_right_clicked(JSON.stringify(click_dict))
 
-                //Can create a makeshhift context menu in HTML too
+                //Can create a make shift context menu in HTML too
                 //d3.event.preventDefault();
             });
-
-            // change node fill based on impact
-            var node_rects = panCanvas.selectAll("g .node rect")
-            .on("click", handleMouseClick)
-            .style("fill", function(d) {
-                console.log(color(graph.node(d).ind_norm));
-                return color(graph.node(d).ind_norm);
-            });
-        }
 
         // listener for mouse-hovers
         var edges = panCanvas.selectAll("g .edgePath")
@@ -779,3 +781,7 @@ function updateBackground(color) {
     console.log(color)
     root.style.setProperty('--bgcolor_set', color);
 }
+
+document.addEventListener('contextmenu', function(e) {
+    window.bridge.reset_context_menu("");
+}, true);

@@ -59,12 +59,21 @@ class BaseNavigatorWidget(QtWidgets.QWidget):
         self.button_random_activity = QtWidgets.QPushButton("Random Activity")
         self.change_background = QtWidgets.QPushButton(qicons.settings, "")
 
+        self.context_menu_actions = [("Open Activity", self.open_activity)]
+
+    def open_activity(self, activity_key: tuple):
+        if activity_key is None:
+            return
+        signals.open_activity_tab.emit(activity_key)
+
     def on_context_menu(self, pos):
+        if not self.context_menu_actions or self.bridge.activity_key is None:
+            return
         context = QMenu(self)
-        context_menu_item = QAction("RED Alert", self)
-        context_menu_item.triggered.connect(
-            lambda: self.update_background)
-        context.addAction(context_menu_item)
+        for action_name, _action in self.context_menu_actions:
+            context_menu_item = QAction(action_name, self)
+            context_menu_item.triggered.connect(lambda: _action(activity_key=self.bridge.activity_key))
+            context.addAction(context_menu_item)
         context.popup(self.mapToGlobal(pos))
 
     def load_finished_handler(self, *args, **kwargs) -> None:
@@ -154,6 +163,10 @@ class Bridge(QObject):
     update_graph = Signal(object)
     style = Signal(str)
 
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.activity_key = None
+
     @Slot(str, name="node_clicked")
     def node_clicked(self, click_text: str):
         """ Is called when a node is clicked in Javascript.
@@ -175,6 +188,15 @@ class Bridge(QObject):
         """
         to_svg(svg)
 
+    @Slot(str, name="reset_context_menu")
+    def reset_context_menu(self, args: str):
+        """ This method is called when the mouse is right-clicked anywhere on the browser.
+            This is mainly used to ignore the clicks not done on nodes
+            by resetting the previous activity which was right-clicked.
+        """
+        print("reset_context_menu Called")
+        self.activity_key = None
+
     @Slot(str, name="node_right_clicked")
     def node_right_clicked(self, click_text: str):
         """ Is called when a node is clicked in Javascript.
@@ -183,10 +205,12 @@ class Bridge(QObject):
             - the node that was clicked on
             - mouse button and additional keys pressed
         """
+        # store the activity key and x,y absolute?
+        print("node_right_clicked Called")
+
         click_dict = json.loads(click_text)
-        click_dict["key"] = (click_dict["database"], click_dict["id"])  # since JSON does not know tuples
         print("Click information: ", click_dict)
-        #self.update_graph.emit(click_dict)
+        self.activity_key = (click_dict["database"], click_dict["id"])  # since JSON does not know tuples
 
 
 class BaseGraph(object):
