@@ -72,7 +72,7 @@ class ActivityTab(QtWidgets.QWidget):
     The final table of this tab lists these 'Downstream Consumers'
     """
 
-    def __init__(self, key: tuple, parent=None, read_only=True):
+    def __init__(self, key: tuple, parent=None, read_only=False):
         super(ActivityTab, self).__init__(parent)
         self.read_only = read_only
         self.db_read_only = project_settings.db_is_readonly(db_name=key[0])
@@ -113,7 +113,7 @@ class ActivityTab(QtWidgets.QWidget):
         # Reveal/hide exchange comment columns
         self.checkbox_comment = QtWidgets.QCheckBox("Comments")
         self.checkbox_comment.setToolTip("Show/hide the comment column")
-        self.checkbox_comment.setChecked(False)
+        self.checkbox_comment.setChecked(True)
         self.checkbox_comment.toggled.connect(self.show_comments)
 
         # Toolbar Layout
