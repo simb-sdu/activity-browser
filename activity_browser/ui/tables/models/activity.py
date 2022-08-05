@@ -120,9 +120,22 @@ class BaseExchangeModel(EditablePandasModel):
     def paste_exchanges_for_activity(self,proxies: list) -> None:
         source = pd.read_clipboard(converters={'key': ast.literal_eval})
         keys = source['key'].to_list()
-        db_name = source['database'].to_list()
         signals.exchanges_add.emit(keys,self.key)
 
+        for key in keys: #iterate for each key, for copying more than one exchange at a time)
+            for field in source: #iterate for all fields in the exchange, i.e. value, comment, formula, etc.
+                value=source[field].to_list() #what type should the value be? The error says either int or sdlice, which I dont understand since e.g. the 'comment' should be a string from my logic? Also, how to put the '' areound the value field name, e.g. 'comment'
+                signals.exchange_modified.emit(key,field,value) #should the field be converted by a toString()? or some other way to ad the "" around the field name, e.g. "comment"
+
+        #amount = source['amount'].to_list()
+        #signals.exchange_modified.emit(keys,"amount",amount) #error when running this, see lines below
+            """
+            Updating activity in metadata:  'test' (unit, GLO, None) ('JJensen case studies', '60e20c58dd464061bb0c42052c20ef41')
+            Traceback (most recent call last):
+            File "C:\Users\simb\Anaconda3\envs\dev_ab\Lib\site-packages\activity_browser\activity-browser\activity_browser\controllers\activity.py", line 266, in modify_exchange
+                exchange[field] = value
+            TypeError: list indices must be integers or slices, not str
+            """
 
     @Slot(list, name="openActivities")
     def open_activities(self, proxies: list) -> None:

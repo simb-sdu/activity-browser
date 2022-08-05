@@ -286,11 +286,15 @@ def get_exchanges_in_activity_notation(exchanges):
 
             row = {
                 'key': from_act.key,
-                'flow type': exc.get('type', ''),
                 'amount': exc.get('amount', ''),
                 'formula': exc.get('formula', ''),
                 'comment': exc.get('comment', ''),
-                'database':from_act.get('database', ''),
+                #add the uncertainty and pedigree later
+                #'uncertainty':exc.get('uncertainty','')
+                #'pedigree':exc.get('pedigree','')
+
+                #not needed -> 'database':from_act.get('database', ''),
+                #not needed -> 'flow type': exc.get('type', ''),
             }
             data.append(row)
 
